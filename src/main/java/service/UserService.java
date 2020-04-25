@@ -1,6 +1,6 @@
 package service;
 
-import dao.UserDao;
+import dao.UserJDBCDao;
 import model.User;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -18,23 +18,23 @@ public class UserService {
 
 
         public List<User> getAllUsers() throws SQLException {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         return dao.getAllUsers();
     }
 
     public void deleteUser(User user) throws SQLException {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         dao.deleteUser(user.getId());
 
     }
 
     public void updateUser(User user) throws SQLException {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         dao.updateUser(user);
     }
 
     public User getUserById(long id)  {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         User user=null;
         try {
             user =  dao.getClientById(id);
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public boolean addUser(User user) throws SQLException {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         try {
             //connection.setAutoCommit(false);
             dao.addUser(user);//отменил setAutoCommit(false),чтобы изменения тут же фиксировались в базе
@@ -68,7 +68,7 @@ public class UserService {
 
 
     public void cleanUp()  {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         try {
             dao.dropTable();
         } catch (SQLException e) {
@@ -77,7 +77,7 @@ public class UserService {
     }
 
     public void createTable()  {
-        UserDao dao = getUserDao();
+        UserJDBCDao dao = getUserDao();
         try {
             dao.createTable();
         } catch (SQLException e) {
@@ -109,7 +109,7 @@ public class UserService {
         }
     }
 
-        private static UserDao getUserDao () {
-            return new UserDao(getMysqlConnection());
+        private static UserJDBCDao getUserDao () {
+            return new UserJDBCDao(getMysqlConnection());
         }
     }
