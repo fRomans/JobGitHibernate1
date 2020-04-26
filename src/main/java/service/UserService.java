@@ -1,115 +1,53 @@
 package service;
 
+import dao.UserHibernateDAO;
 import dao.UserJDBCDao;
 import model.User;
-import java.sql.Connection;
-import java.sql.Driver;
+import org.hibernate.SessionFactory;
+import util.DBHelper;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-     private final Connection connection;
+    private static UserService userService;
 
-    public UserService() {
-            this.connection = UserService.getMysqlConnection();
+    private SessionFactory sessionFactory;
+
+    private UserService(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
-
+    public static UserService getInstance() {
+        if (userService == null) {
+            userService = new UserService(DBHelper.getSessionFactory());
+        }
+        return userService;
+    }
+    UserHibernateDAO dao = new UserHibernateDAO();
         public List<User> getAllUsers() throws SQLException {
-        UserJDBCDao dao = getUserDao();
         return dao.getAllUsers();
     }
 
     public void deleteUser(User user) throws SQLException {
-        UserJDBCDao dao = getUserDao();
         dao.deleteUser(user.getId());
 
     }
 
     public void updateUser(User user) throws SQLException {
-        UserJDBCDao dao = getUserDao();
         dao.updateUser(user);
     }
 
     public User getUserById(long id)  {
-        UserJDBCDao dao = getUserDao();
-        User user=null;
-        try {
-            user =  dao.getClientById(id);
-        } catch (SQLException e) {
-            System.out.println(" UserDao"+ e);;
-        }
+        User  user =  dao.getClientById(id);
         return user;
     }
 
     public boolean addUser(User user) throws SQLException {
-        UserJDBCDao dao = getUserDao();
-        try {
-            //connection.setAutoCommit(false);
-            dao.addUser(user);//отменил setAutoCommit(false),чтобы изменения тут же фиксировались в базе
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ignore) {
-            }
 
-        }
+            dao.addUser(user);
 
-        List<User> user2 = getAllUsers();
-        for (User user1 : user2) {
-            if (user.getPassword().equals(user1.getPassword()) && user.getName().equals(user1.getName()) && user.getMoney().equals(user1.getMoney())) {
-                return true;//значит такой клиент(user) появился в базе
-            }
-        }
         return false;
     }
 
-
-    public void cleanUp()  {
-        UserJDBCDao dao = getUserDao();
-        try {
-            dao.dropTable();
-        } catch (SQLException e) {
-            System.out.println("!!Ошибка cleanUp!!"+e);
-        }
-    }
-
-    public void createTable()  {
-        UserJDBCDao dao = getUserDao();
-        try {
-            dao.createTable();
-        } catch (SQLException e) {
-            System.out.println("!!Ошибка createTable!!"+e);
-        }
-    }
-
-    private static Connection getMysqlConnection() {
-        try {
-            DriverManager.registerDriver((Driver) Class.forName("com.mysql.jdbc.Driver").newInstance());
-
-            StringBuilder url = new StringBuilder();
-
-            url.
-                    append("jdbc:mysql://").        //db type
-                    append("localhost:").           //host name
-                    append("3306/").                //port
-                    append("db_example?").          //db name
-                    append("user=root&").          //login
-                    append("password=root").       //password
-                    append("&serverTimezone=UTC");   //setup server time
-            System.out.println("URL: " + url + "\n");
-
-            Connection connection = DriverManager.getConnection(url.toString());
-            return connection;
-        } catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new IllegalStateException();
-        }
-    }
-
-        private static UserJDBCDao getUserDao () {
-            return new UserJDBCDao(getMysqlConnection());
-        }
     }

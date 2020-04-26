@@ -16,7 +16,7 @@ import java.sql.SQLException;
 @WebServlet(urlPatterns = "/users/update", name = "UpdateServlet")
 public class UpdateServlet extends HttpServlet {
 
-    private UserService service = new UserService();
+    private UserService service = UserService.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -14,6 +14,7 @@ public class UserJDBCDao implements UserDAO {
     }
 
     //проверить наличие имени и пароля
+    @Override
     public boolean validateClient(String name, String password) {
         boolean yes = true;
         if (name == null || password == null) {
@@ -22,6 +23,7 @@ public class UserJDBCDao implements UserDAO {
         return yes;
     }
 
+    @Override
     public User getClientByName(String name) {
         Statement stmt = null;
         User bankClient = null;
@@ -43,6 +45,7 @@ public class UserJDBCDao implements UserDAO {
         return bankClient;
     }
 
+    @Override
     public List<User> getAllUsers() {
         List<User> userslist = new LinkedList<>();
         Statement stmt = null;
@@ -61,6 +64,7 @@ public class UserJDBCDao implements UserDAO {
         return userslist;
     }
 
+    @Override
     public User getClientById(long id) {
 
         Statement stmt = null;
@@ -82,6 +86,7 @@ public class UserJDBCDao implements UserDAO {
         return user;
     }
 
+    @Override
     public void deleteUser(Long id)  {
         Statement stmt = null;
         try {
@@ -94,6 +99,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
+    @Override
     public void updateUser(User user) {
 
         PreparedStatement stmt = null;
@@ -111,6 +117,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
+    @Override
     public void addUser(User user)  {
 //проверить наличие имени и пароля
         if (!validateClient(user.getName(), user.getPassword())) {
@@ -145,6 +152,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
+    @Override
     public void createTable()  {
         Statement stmt = null;
         try {
@@ -158,6 +166,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
+    @Override
     public void dropTable() {
         Statement stmt = null;
         try {

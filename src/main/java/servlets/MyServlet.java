@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns = "/users", name = "MyServlet")
 public class MyServlet extends HttpServlet {
 
-    private UserService service = new UserService();
+    private UserService service = UserService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
