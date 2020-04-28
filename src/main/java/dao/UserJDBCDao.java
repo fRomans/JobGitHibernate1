@@ -1,6 +1,7 @@
 package dao;
 
 import model.User;
+import util.DBHelper;
 
 import java.sql.*;
 import java.util.LinkedList;
@@ -152,7 +153,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
-    @Override
+
     public void createTable()  {
         Statement stmt = null;
         try {
@@ -166,7 +167,7 @@ public class UserJDBCDao implements UserDAO {
         }
     }
 
-    @Override
+
     public void dropTable() {
         Statement stmt = null;
         try {

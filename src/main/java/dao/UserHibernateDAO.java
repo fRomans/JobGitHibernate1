@@ -2,20 +2,25 @@ package dao;
 
 import model.User;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import util.DBHelper;
 
-import java.sql.*;
-import java.util.LinkedList;
 import java.util.List;
 
-public class UserHibernateDAO  {
+public class UserHibernateDAO implements UserDAO {
 
-    private Session session;
+    private final SessionFactory sessionFactory;
+
+    public UserHibernateDAO() {
+        this.sessionFactory = DBHelper.getSessionFactory();
+    }
+
+
 
 
     //проверить наличие имени и пароля
-
+    @Override
     public boolean validateClient(String name, String password) {
         boolean yes = true;
         if (name == null || password == null) {
@@ -24,11 +29,11 @@ public class UserHibernateDAO  {
         return yes;
     }
 
-
+    @Override
     public User getClientByName(String name) {
         String sql = "select u from User u where u.name= :name";
 
-        User user = (User) DBHelper.getSessionFactory()
+        User user = (User) sessionFactory
                 .openSession().createQuery(sql)
                 .setParameter("name", name)
                 .uniqueResult();
@@ -37,23 +42,23 @@ public class UserHibernateDAO  {
 
     }
 
-
+    @Override
     public List<User> getAllUsers() {
-        List<User> users = (List<User>) DBHelper.getSessionFactory()
+        List<User> users = (List<User>) sessionFactory
                 .openSession().createQuery("from User").list();
         return users;
     }
 
-
+    @Override
     public User getClientById(long id) {
-        return (User) DBHelper.getSessionFactory().openSession()
+        return (User) sessionFactory.openSession()
                 .get(User.class, id);
     }
 
-
+    @Override
     public void deleteUser(Long id)  {
 
-        Session session = DBHelper.getSessionFactory().openSession();
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         try {
             session.delete(getClientById(id));
@@ -67,10 +72,10 @@ public class UserHibernateDAO  {
 
     }
 
-
+    @Override
     public void updateUser(User user) {
 
-        Session session = DBHelper.getSessionFactory().openSession();
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         try {
             session.update(user);
@@ -83,14 +88,14 @@ public class UserHibernateDAO  {
         }
     }
 
-
+    @Override
     public void addUser(User user)  {
 //проверить наличие имени и пароля
         if (!validateClient(user.getName(), user.getPassword())) {
             System.out.println("!!! Не прошло валидацию!!!");
             return;
         }
-        Session session = DBHelper.getSessionFactory().openSession();
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         try {
             session.save(user);

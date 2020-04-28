@@ -1,7 +1,7 @@
 package service;
 
+import dao.UserDAO;
 import dao.UserHibernateDAO;
-import dao.UserJDBCDao;
 import model.User;
 import org.hibernate.SessionFactory;
 import util.DBHelper;
@@ -13,9 +13,10 @@ public class UserService {
     private static UserService userService;
 
     private SessionFactory sessionFactory;
+    private final UserDAO userDAO;
 
-    private UserService(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    private UserService() {
+        this.userDAO = ;//todo получать dao из фабрики
     }
 
     public static UserService getInstance() {
@@ -24,7 +25,7 @@ public class UserService {
         }
         return userService;
     }
-    UserHibernateDAO dao = new UserHibernateDAO();
+    UserHibernateDAO dao = new UserHibernateDAO(sessionFactory);
         public List<User> getAllUsers() throws SQLException {
         return dao.getAllUsers();
     }
